@@ -799,7 +799,7 @@ footer {
       <span class="chip">Financial modelling</span>
       <span class="chip">C-suite comms</span>
     </div>
-    <a href="/cdn-cgi/l/email-protection#c3b1aab7a2a5ada6b5a6b0b3a6b1a6aab1a283a4aea2aaafeda0acaefcb0b6a1a9a6a0b7fe8ea6b1a0aba2adb78ea2b7a0abe686f1e6fbf7e682f1e6f1f3e686f1e6fbf3e6faf7e6f1f380abaaa6a5e6f1f3aca5e6f1f390b7a2a5a5e6f1f382b3b3afaaa0a2b7aaacad" class="btn-primary">Let's talk →</a>
+    <a href="mailto:ritafnevespereira@gmail.com?subject=MerchantMatch%E2%84%A2%20%E2%80%94%20Chief%20of%20Staff%20Application" class="btn-primary">Let's talk →</a>
   </div>
 </section>
 
@@ -809,7 +809,7 @@ footer {
   <div class="footer-mono">Not affiliated with Knot API, Inc. · Built to demonstrate initiative.</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // Cursor
 const cur = document.getElementById('cur');
 const curR = document.getElementById('cur-r');
@@ -823,4 +823,11 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
 })();
 
 // Scroll reveal
-const revEls = document.qu
+const revEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.1});
+revEls.forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
