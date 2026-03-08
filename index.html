@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MerchantMatch™ — A Knot Product Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --gray-50: #f7f7f7;
+  --gray-100: #eeeeee;
+  --gray-300: #cccccc;
+  --gray-500: #888888;
+  --gray-700: #444444;
+  --mint: #c8f0d8;
+  --mint-dark: #2d7a4f;
+  --mint-mid: #8edba8;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
+}
+
+/* ── Cursor ── */
+#cur { width:10px;height:10px;background:var(--black);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s; }
+#cur-r { width:30px;height:30px;border:1px solid rgba(0,0,0,.3);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .14s ease; }
+body:has(a:hover) #cur-r, body:has(button:hover) #cur-r { width:48px;height:48px;border-color:var(--black); }
+
+/* ── Nav ── */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 2.5rem;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--gray-100);
+}
+.nav-logo {
+  font-family:'DM Sans',sans-serif;
+  font-size:1.2rem;font-weight:700;
+  letter-spacing:-.04em;
+  color:var(--black);
+}
+.nav-pill {
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.35rem .9rem;
+  background:var(--mint);
+  border-radius:100px;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;
+  color:var(--mint-dark);
+}
+.nav-pill::before { content:'●'; font-size:.5rem; }
+
+/* ── Hero ── */
+.hero {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  padding-top:4.5rem;
+  overflow:hidden;
+}
+
+.hero-left {
+  padding:8rem 4rem 6rem 3.5rem;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+
+.hero-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gray-500);
+  margin-bottom:2rem;
+  opacity:0;animation:up .6s .1s both;
+}
+
+.hero-title {
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(3rem,5.5vw,5rem);
+  font-weight:400;line-height:1.05;
+  letter-spacing:-.02em;
+  margin-bottom:1.75rem;
+  opacity:0;animation:up .65s .22s both;
+}
+.hero-title em { font-style:italic;color:var(--gray-500); }
+
+.hero-body {
+  font-size:1.05rem;line-height:1.7;
+  color:var(--gray-700);max-width:460px;
+  margin-bottom:2.5rem;
+  opacity:0;animation:up .65s .34s both;
+}
+
+.hero-cta {
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.85rem 1.6rem;
+  background:var(--black);color:var(--white);
+  border:none;border-radius:4px;
+  font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;text-decoration:none;
+  transition:opacity .2s;
+  opacity:0;animation:up .65s .44s both;
+}
+.hero-cta:hover { opacity:.85; }
+.hero-cta-ghost {
+  display:inline-flex;align-items:center;gap:.5rem;
+  margin-left:1rem;
+  font-size:.9rem;color:var(--gray-500);
+  text-decoration:none;
+  cursor:pointer;
+  opacity:0;animation:up .65s .5s both;
+}
+
+/* ── Hero right: animated card demo ── */
+.hero-right {
+  position:relative;
+  background:var(--gray-50);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Mint blobs */
+.blob {
+  position:absolute;border-radius:50%;
+  background:var(--mint);filter:blur(60px);opacity:.6;
+  pointer-events:none;
+}
+.blob-1 { width:400px;height:400px;top:-80px;right:-80px;opacity:.4; }
+.blob-2 { width:260px;height:260px;bottom:60px;left:40px;opacity:.35; }
+
+/* The mock UI card */
+.demo-wrap {
+  position:relative;z-index:2;
+  width:340px;
+  opacity:0;animation:up .7s .6s both;
+}
+
+.demo-phone {
+  background:var(--white);
+  border-radius:20px;
+  box-shadow:0 24px 80px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.06);
+  overflow:hidden;
+}
+
+.demo-topbar {
+  background:var(--black);
+  padding:1rem 1.25rem .75rem;
+  color:var(--white);
+}
+.demo-bank { font-size:.72rem;opacity:.5;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.25rem; }
+.demo-cardnum { font-family:'JetBrains Mono',monospace;font-size:.9rem;letter-spacing:.12em; }
+
+.demo-body { padding:1.25rem; }
+
+.demo-section-title {
+  font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gray-500);margin-bottom:.85rem;
+}
+
+/* Merchant rows */
+.merchant-row {
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;
+  border-radius:8px;
+  margin-bottom:.4rem;
+  transition:background .2s;
+}
+.merchant-row.linked { background:rgba(200,240,216,.35); }
+.merchant-row.suggested { background:var(--gray-50);border:1px dashed var(--gray-300); }
+
+.merchant-icon {
+  width:32px;height:32px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.merchant-name { font-size:.85rem;font-weight:500;flex:1; }
+.merchant-badge {
+  font-size:.62rem;font-weight:600;letter-spacing:.04em;
+  padding:.2rem .55rem;border-radius:100px;
+}
+.badge-linked { background:var(--mint);color:var(--mint-dark); }
+.badge-match { background:var(--black);color:var(--white); }
+.badge-pct { background:var(--gray-100);color:var(--gray-700); }
+
+.demo-divider {
+  height:1px;background:var(--gray-100);
+  margin:1rem 0;
+}
+
+.demo-insight {
+  background:var(--black);border-radius:10px;
+  padding:.9rem 1rem;
+  display:flex;align-items:flex-start;gap:.65rem;
+}
+.demo-insight-icon { font-size:1rem;margin-top:.1rem; }
+.demo-insight-text { font-size:.78rem;line-height:1.5;color:rgba(255,255,255,.8); }
+.demo-insight-text strong { color:var(--white); }
+
+/* Animate merchant rows in sequence */
+.merchant-row { opacity:0;animation:up .5s both; }
+.merchant-row:nth-child(1) { animation-delay:.9s; }
+.merchant-row:nth-child(2) { animation-delay:1.05s; }
+.merchant-row:nth-child(3) { animation-delay:1.2s; }
+.merchant-row:nth-child(4) { animation-delay:1.35s; }
+.merchant-row:nth-child(5) { animation-delay:1.5s; }
+.demo-insight { opacity:0;animation:up .5s 1.7s both; }
+
+/* ── Sections ── */
+.section {
+  max-width:1100px;margin:0 auto;
+  padding:7rem 2.5rem;
+}
+.section-sm { padding:5rem 2.5rem; }
+
+.label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gray-500);margin-bottom:1rem;
+}
+
+.section-title {
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2rem,3.8vw,3.4rem);
+  font-weight:400;line-height:1.1;
+  letter-spacing:-.02em;
+  margin-bottom:1.25rem;
+}
+.section-title em { font-style:italic;color:var(--gray-500); }
+
+.section-body {
+  font-size:1rem;line-height:1.75;
+  color:var(--gray-700);max-width:560px;
+}
+
+/* ── How it works ── */
+.hiw-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+  margin-top:4rem;
+}
+
+.hiw-card {
+  padding:2rem;
+  border:1px solid var(--gray-100);
+  border-radius:12px;
+  background:var(--white);
+  transition:box-shadow .2s, transform .2s;
+}
+.hiw-card:hover { box-shadow:0 12px 40px rgba(0,0,0,.07);transform:translateY(-3px); }
+
+.hiw-num {
+  font-family:'Instrument Serif',serif;
+  font-size:3rem;font-weight:400;
+  line-height:1;color:var(--gray-100);
+  margin-bottom:1.25rem;
+}
+.hiw-title { font-size:.95rem;font-weight:600;margin-bottom:.5rem; }
+.hiw-desc { font-size:.85rem;line-height:1.65;color:var(--gray-500); }
+
+/* ── Value props — alternating ── */
+.prop {
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;
+  align-items:center;
+  padding:5rem 2.5rem;
+  max-width:1100px;margin:0 auto;
+}
+.prop.flip { direction:rtl; }
+.prop.flip > * { direction:ltr; }
+
+.prop-text {}
+.prop-title {
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(1.6rem,2.5vw,2.4rem);
+  font-weight:400;line-height:1.15;
+  letter-spacing:-.02em;margin-bottom:1rem;
+}
+.prop-title em { font-style:italic;color:var(--gray-500); }
+.prop-body { font-size:.95rem;line-height:1.75;color:var(--gray-700);margin-bottom:1.5rem; }
+
+.prop-stat {
+  display:inline-flex;flex-direction:column;
+  padding:1rem 1.25rem;
+  background:var(--gray-50);border-radius:8px;
+  border-left:3px solid var(--mint-dark);
+}
+.prop-stat-num {
+  font-family:'Instrument Serif',serif;
+  font-size:2rem;font-weight:400;line-height:1;
+  color:var(--black);
+}
+.prop-stat-label { font-size:.78rem;color:var(--gray-500);margin-top:.2rem; }
+
+/* Visual panels */
+.prop-visual {
+  border-radius:16px;overflow:hidden;
+  background:var(--gray-50);
+  padding:2rem;
+  min-height:320px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;
+}
+.prop-visual .blob { opacity:.3; }
+
+/* Graph bars */
+.bar-chart { display:flex;align-items:flex-end;gap:.6rem;height:160px;margin-top:1.5rem; }
+.bar-wrap { display:flex;flex-direction:column;align-items:center;gap:.5rem;flex:1; }
+.bar {
+  width:100%;border-radius:4px 4px 0 0;
+  background:var(--gray-200);
+  transition:height .4s ease;
+  position:relative;
+}
+.bar.highlight { background:var(--black); }
+.bar.mint { background:var(--mint); }
+.bar-label { font-size:.62rem;color:var(--gray-500);text-align:center;white-space:nowrap; }
+.bar-val { position:absolute;top:-1.2rem;left:50%;transform:translateX(-50%);font-size:.65rem;font-weight:600;white-space:nowrap; }
+
+/* Merchant graph */
+.merchant-graph { }
+.mgraph-title { font-size:.75rem;color:var(--gray-500);margin-bottom:1rem;font-weight:500; }
+.mgraph-row {
+  display:flex;align-items:center;gap:.75rem;
+  margin-bottom:.6rem;
+}
+.mgraph-name { font-size:.78rem;width:80px;flex-shrink:0; }
+.mgraph-track { flex:1;height:8px;background:var(--gray-100);border-radius:100px;overflow:hidden; }
+.mgraph-fill { height:100%;border-radius:100px;background:var(--gray-300); }
+.mgraph-fill.hi { background:var(--black); }
+.mgraph-fill.md { background:var(--gray-500); }
+.mgraph-fill.mm { background:var(--mint-dark); }
+.mgraph-pct { font-size:.72rem;color:var(--gray-500);width:36px;text-align:right; }
+
+/* ── Full bleed dark section ── */
+.dark-section {
+  background:var(--black);color:var(--white);
+  padding:7rem 2.5rem;
+  position:relative;overflow:hidden;
+}
+.dark-section .blob { opacity:.12; }
+.dark-inner { max-width:1100px;margin:0 auto; }
+
+.dark-section .label { color:rgba(200,240,216,.7); }
+.dark-section .section-title { color:var(--white); }
+.dark-section .section-title em { color:rgba(255,255,255,.4); }
+
+.feature-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;
+  margin-top:4rem;
+}
+.feature-card {
+  padding:1.75rem;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  transition:border-color .2s, background .2s;
+}
+.feature-card:hover {
+  border-color:rgba(200,240,216,.3);
+  background:rgba(200,240,216,.04);
+}
+.feature-icon { font-size:1.5rem;margin-bottom:1rem; }
+.feature-title { font-size:.95rem;font-weight:600;margin-bottom:.5rem; }
+.feature-desc { font-size:.83rem;line-height:1.65;color:rgba(255,255,255,.55); }
+
+/* ── Revenue model ── */
+.rev-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+  margin-top:3.5rem;
+}
+.rev-card {
+  padding:2rem;border-radius:12px;
+  border:1px solid var(--gray-100);
+  background:var(--white);
+}
+.rev-label {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gray-500);margin-bottom:.75rem;
+}
+.rev-name { font-size:1.05rem;font-weight:600;margin-bottom:.5rem; }
+.rev-desc { font-size:.83rem;line-height:1.6;color:var(--gray-700); }
+.rev-eg {
+  margin-top:.9rem;
+  padding:.6rem .85rem;
+  background:var(--gray-50);border-radius:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;color:var(--gray-700);
+  line-height:1.5;
+}
+
+/* ── Author CTA ── */
+.author-section {
+  border-top:1px solid var(--gray-100);
+  padding:6rem 2.5rem;
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
+  align-items:center;
+}
+.author-eyebrow {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gray-500);margin-bottom:1.5rem;
+}
+.author-title {
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  font-weight:400;line-height:1.1;
+  letter-spacing:-.02em;margin-bottom:1rem;
+}
+.author-title em { font-style:italic;color:var(--gray-500); }
+.author-body { font-size:.95rem;line-height:1.75;color:var(--gray-700); }
+
+.author-card {
+  border:1px solid var(--gray-100);border-radius:16px;padding:2rem;
+  background:var(--gray-50);
+}
+.author-name {
+  font-family:'Instrument Serif',serif;
+  font-size:1.6rem;font-weight:400;
+  margin-bottom:.15rem;
+}
+.author-role { font-size:.83rem;color:var(--gray-500);margin-bottom:1.5rem; }
+.author-bio { font-size:.85rem;line-height:1.7;color:var(--gray-700);margin-bottom:1.5rem; }
+
+.chips { display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.75rem; }
+.chip {
+  padding:.28rem .75rem;
+  border:1px solid var(--gray-200);border-radius:100px;
+  font-size:.72rem;color:var(--gray-700);background:var(--white);
+}
+
+.btn-primary {
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.85rem 1.5rem;
+  background:var(--black);color:var(--white);
+  border:none;border-radius:4px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;
+  cursor:pointer;text-decoration:none;
+  transition:opacity .2s;
+}
+.btn-primary:hover { opacity:.8; }
+
+/* ── Footer ── */
+footer {
+  padding:1.5rem 2.5rem;
+  border-top:1px solid var(--gray-100);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.footer-mono {
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;color:var(--gray-300);letter-spacing:.06em;
+}
+
+/* ── Animations ── */
+@keyframes up {
+  from { opacity:0;transform:translateY(18px); }
+  to   { opacity:1;transform:translateY(0); }
+}
+.reveal { opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease; }
+.reveal.in { opacity:1;transform:translateY(0); }
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  .hiw-grid,.feature-grid,.rev-grid{grid-template-columns:1fr;}
+  .prop,.author-section{grid-template-columns:1fr;gap:2.5rem;}
+  .prop.flip{direction:ltr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="merchantmatch.html" style="display:inline-flex;align-items:center;"><svg style="height:20px;width:auto;display:block;" xmlns="http://www.w3.org/2000/svg" width="289" height="108" viewBox="0 0 289 108" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M198.5 91.6984C211.04 91.6984 221.205 81.5329 221.205 68.9932C221.205 56.4535 211.04 46.2881 198.5 46.2881C185.96 46.2881 175.795 56.4535 175.795 68.9932C175.795 81.5329 185.96 91.6984 198.5 91.6984ZM198.5 107.493C219.763 107.493 237 90.2562 237 68.9932C237 47.7303 219.763 30.4932 198.5 30.4932C177.237 30.4932 160 47.7303 160 68.9932C160 90.2562 177.237 107.493 198.5 107.493Z" fill="#171717"/>
+    <path d="M279.237 107.986C282.321 107.986 285.359 107.753 288.35 107.285V91.4431C286.574 91.7235 284.938 91.8637 283.443 91.8637C278.956 91.8637 275.685 90.8356 273.629 88.7794C271.573 86.7231 270.544 83.779 270.544 79.9469V47.2809H288.069V30.8777H270.544V13.4932H252.179V19.3815C252.179 26.5264 252.179 30.8777 252.179 30.8777H239V47.2809H252.179V80.9283C252.179 89.4336 254.515 96.0696 259.188 100.836C263.955 105.603 270.638 107.986 279.237 107.986Z" fill="#171717"/>
+    <path d="M85 105.493H102.666V62.4626C102.666 57.6965 104.015 53.8745 106.712 50.9968C109.499 48.1191 113.095 46.6803 117.5 46.6803C121.905 46.6803 125.456 48.1191 128.154 50.9968C130.941 53.7846 132.334 57.6065 132.334 62.4626V105.493H150V58.281C150 52.7954 148.831 47.9842 146.494 43.8475C144.156 39.6209 140.875 36.3386 136.649 34.0004C132.514 31.6623 127.749 30.4932 122.355 30.4932C117.77 30.4932 113.634 31.3925 109.948 33.1911C106.352 34.9896 103.565 37.6425 101.587 41.1497V32.1119H85V105.493Z" fill="#171717"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M26 58.4448L26 0.493225H10L10 57.7654C8.61308 58.4371 7.29599 59.3109 6.09136 60.3885C-1.42383 67.1116 -1.42383 78.8754 6.09137 85.5985C7.29599 86.6761 8.61309 87.5499 10 88.2216L10 105.493H26L26 87.5422C27.3538 86.7383 28.6167 85.7306 29.7431 84.5214L30.2805 83.9445L43.6438 94.914C52.7647 102.401 64.1997 106.493 76 106.493L76 90.4932C67.902 90.4932 60.0547 87.6849 53.7954 82.5469L41.271 72.266L75.7046 36.0018L64.1018 24.9847L29.6033 61.3173C28.5126 60.1737 27.2981 59.2156 26 58.4448Z" fill="#171717"/>
+</svg></a>
+  <div style="display:flex;align-items:center;gap:1.5rem;margin-left:auto;">
+    <a href="merchantmatch-api.html" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.06em;color:var(--gray-500);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='var(--black)'" onmouseout="this.style.color='var(--gray-500)'">API Docs →</a>
+    <div class="nav-pill">Product Concept</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-label">A new product idea — by Rita, Chief of Staff candidate</div>
+    <h1 class="hero-title">
+      Introducing<br>
+      MerchantMatch™<br>
+      <em>by Knot</em>
+    </h1>
+    <p class="hero-body">
+      Knot already knows which merchants your cardholders are linked to. MerchantMatch™ uses that graph to recommend the merchants they <em>should</em> be linked to — turning card infrastructure into a discovery and revenue engine.
+    </p>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:.75rem;opacity:0;animation:up .65s .44s both;">
+      <a href="#how" class="hero-cta">See how it works ↓</a>
+      <a href="#author" class="hero-cta-ghost">About this pitch →</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="demo-wrap">
+      <div class="demo-phone">
+        <div class="demo-topbar">
+          <div class="demo-bank">Smart Bank · Visa</div>
+          <div class="demo-cardnum">•••• •••• •••• 4092</div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-section-title">Linked merchants</div>
+
+          <div class="merchant-row linked">
+            <div class="merchant-icon" style="background:#f0f0f0;">🎵</div>
+            <div class="merchant-name">Spotify</div>
+            <span class="merchant-badge badge-linked">Linked</span>
+          </div>
+          <div class="merchant-row linked">
+            <div class="merchant-icon" style="background:#f0f0f0;">📺</div>
+            <div class="merchant-name">Netflix</div>
+            <span class="merchant-badge badge-linked">Linked</span>
+          </div>
+          <div class="merchant-row linked">
+            <div class="merchant-icon" style="background:#f0f0f0;">🚗</div>
+            <div class="merchant-name">Uber</div>
+            <span class="merchant-badge badge-linked">Linked</span>
+          </div>
+
+          <div class="demo-divider"></div>
+          <div class="demo-section-title">Recommended for you</div>
+
+          <div class="merchant-row suggested">
+            <div class="merchant-icon" style="background:#f7f7f7;">🏠</div>
+            <div class="merchant-name">Airbnb</div>
+            <span class="merchant-badge badge-match">Match</span>
+          </div>
+          <div class="merchant-row suggested">
+            <div class="merchant-icon" style="background:#f7f7f7;">🎮</div>
+            <div class="merchant-name">Xbox Game Pass</div>
+            <span class="merchant-badge badge-pct">84% fit</span>
+          </div>
+
+          <div class="demo-divider"></div>
+          <div class="demo-insight">
+            <div class="demo-insight-icon">💡</div>
+            <div class="demo-insight-text">
+              <strong>Cardholders like you</strong> who use Spotify + Netflix also link their card at Disney+ — add it in one tap.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="label reveal">How it works</div>
+  <h2 class="section-title reveal d1">
+    The merchant graph<br>
+    <em>you already have</em>
+  </h2>
+  <p class="section-body reveal d2">
+    Knot's existing infrastructure sees which merchants each cardholder is linked to. MerchantMatch™ layers a recommendation engine on top — surfacing the right merchant at the right moment, inside the issuer's existing app.
+  </p>
+
+  <div class="hiw-grid">
+    <div class="hiw-card reveal d1">
+      <div class="hiw-num">01</div>
+      <div class="hiw-title">Read the graph</div>
+      <div class="hiw-desc">Knot already holds a unique dataset: which merchants each cardholder is linked to across the network. No new data collection needed — the signal is already there.</div>
+    </div>
+    <div class="hiw-card reveal d2">
+      <div class="hiw-num">02</div>
+      <div class="hiw-title">Find the pattern</div>
+      <div class="hiw-desc">Cardholders with Spotify + Netflix + Uber have an 84% overlap with Airbnb. That pattern lives in the graph. MerchantMatch™ surfaces it as a personalised recommendation.</div>
+    </div>
+    <div class="hiw-card reveal d3">
+      <div class="hiw-num">03</div>
+      <div class="hiw-title">One-tap link</div>
+      <div class="hiw-desc">The issuer surfaces the recommendation in their app. The cardholder links their card with one tap via Knot's existing CardSwitcher™ flow. Zero new infrastructure required.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE PROP 1 -->
+<div class="prop reveal">
+  <div class="prop-text">
+    <div class="label">For issuers</div>
+    <h3 class="prop-title">
+      Turn card<br>infrastructure into<br>
+      <em>a revenue channel</em>
+    </h3>
+    <p class="prop-body">
+      Right now, an issuer's card being on file at more merchants is a side effect — not a product. MerchantMatch™ makes it deliberate. More links means more spend, more interchange, and a card that's structurally harder to displace.
+    </p>
+    <div class="prop-stat">
+      <span class="prop-stat-num">+23%</span>
+      <span class="prop-stat-label">Estimated increase in active merchant links per cardholder</span>
+    </div>
+  </div>
+  <div class="prop-visual">
+    <div class="blob" style="width:200px;height:200px;top:-40px;right:-40px;"></div>
+    <div class="mgraph-title">Card presence across top merchants</div>
+    <div class="merchant-graph">
+      <div class="mgraph-row">
+        <div class="mgraph-name" style="font-size:.72rem;">Netflix</div>
+        <div class="mgraph-track"><div class="mgraph-fill hi" style="width:78%"></div></div>
+        <div class="mgraph-pct">78%</div>
+      </div>
+      <div class="mgraph-row">
+        <div class="mgraph-name" style="font-size:.72rem;">Spotify</div>
+        <div class="mgraph-track"><div class="mgraph-fill hi" style="width:71%"></div></div>
+        <div class="mgraph-pct">71%</div>
+      </div>
+      <div class="mgraph-row">
+        <div class="mgraph-name" style="font-size:.72rem;">Uber</div>
+        <div class="mgraph-track"><div class="mgraph-fill md" style="width:54%"></div></div>
+        <div class="mgraph-pct">54%</div>
+      </div>
+      <div class="mgraph-row">
+        <div class="mgraph-name" style="font-size:.72rem;">Airbnb</div>
+        <div class="mgraph-track"><div class="mgraph-fill md" style="width:38%"></div></div>
+        <div class="mgraph-pct">38%</div>
+      </div>
+      <div class="mgraph-row">
+        <div class="mgraph-name" style="font-size:.72rem;">Disney+</div>
+        <div class="mgraph-track"><div class="mgraph-fill md" style="width:29%"></div></div>
+        <div class="mgraph-pct">29%</div>
+      </div>
+      <div style="height:.75rem;"></div>
+      <div style="padding:.75rem;background:rgba(200,240,216,.3);border-radius:8px;border-left:3px solid var(--mint-dark);">
+        <div style="font-size:.72rem;color:var(--mint-dark);font-weight:600;margin-bottom:.2rem;">After MerchantMatch™</div>
+        <div style="font-size:.72rem;color:var(--gray-700);">Airbnb → 61% &nbsp;·&nbsp; Disney+ → 52% &nbsp;·&nbsp; avg links +2.3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE PROP 2 -->
+<div class="prop flip reveal">
+  <div class="prop-text">
+    <div class="label">For cardholders</div>
+    <h3 class="prop-title">
+      Discovery that<br>feels like a<br>
+      <em>feature, not an ad</em>
+    </h3>
+    <p class="prop-body">
+      Because recommendations are based on the cardholder's own merchant graph — not ad targeting — they feel genuinely useful. "People like you also use X" is the one recommendation pattern that doesn't feel creepy. It just feels smart.
+    </p>
+    <div class="prop-stat">
+      <span class="prop-stat-num">1-tap</span>
+      <span class="prop-stat-label">Merchant link via existing CardSwitcher™ flow — zero new UX to build</span>
+    </div>
+  </div>
+  <div class="prop-visual">
+    <div class="blob" style="width:200px;height:200px;bottom:-40px;left:-40px;"></div>
+    <div style="font-size:.72rem;color:var(--gray-500);margin-bottom:1.25rem;font-weight:500;">Recommendation relevance vs. alternatives</div>
+    <div class="bar-chart">
+      <div class="bar-wrap">
+        <div class="bar" style="height:45%;background:var(--gray-200);">
+          <div class="bar-val" style="color:var(--gray-500);">42%</div>
+        </div>
+        <div class="bar-label">Generic<br>card offer</div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar" style="height:58%;background:var(--gray-300);">
+          <div class="bar-val" style="color:var(--gray-700);">55%</div>
+        </div>
+        <div class="bar-label">Category<br>based</div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar highlight" style="height:92%;">
+          <div class="bar-val" style="color:var(--black);">88%</div>
+        </div>
+        <div class="bar-label" style="font-weight:600;color:var(--black);">MerchantMatch™<br>graph-based</div>
+      </div>
+    </div>
+    <div style="font-size:.68rem;color:var(--gray-300);margin-top:1rem;">Estimated click-to-link conversion · illustrative</div>
+  </div>
+</div>
+
+<!-- DARK: FEATURES -->
+<section class="dark-section">
+  <div class="blob" style="width:500px;height:500px;top:-100px;right:-100px;background:var(--mint);"></div>
+  <div class="dark-inner">
+    <div class="label reveal">What's inside</div>
+    <h2 class="section-title reveal d1">
+      Built on infrastructure<br>
+      <em>Knot already owns</em>
+    </h2>
+    <div class="feature-grid">
+      <div class="feature-card reveal d1">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title">Merchant graph engine</div>
+        <div class="feature-desc">Aggregates anonymised link data across Knot's network to surface statistically significant merchant co-occurrence patterns. No PII required.</div>
+      </div>
+      <div class="feature-card reveal d2">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Issuer-branded recommendations</div>
+        <div class="feature-desc">Recommendations surface inside the issuer's existing mobile app — fully white-labelled. The cardholder sees their bank recommending it, not Knot.</div>
+      </div>
+      <div class="feature-card reveal d3">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">One-tap via CardSwitcher™</div>
+        <div class="feature-desc">Linking is handled by Knot's existing CardSwitcher™ flow. No new UX, no new SDK — MerchantMatch™ is a logic layer on top of what already works.</div>
+      </div>
+      <div class="feature-card reveal d1">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Issuer analytics dashboard</div>
+        <div class="feature-desc">Issuers see card presence scores, match rates, and incremental merchant links over time. Turns a utility into a trackable growth metric.</div>
+      </div>
+      <div class="feature-card reveal d2">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Privacy-first by design</div>
+        <div class="feature-desc">Patterns derived from aggregate behaviour, not individual profiling. Fits cleanly within PSD2/GDPR constraints — a key requirement for European deployment.</div>
+      </div>
+      <div class="feature-card reveal d3">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">EU-ready from day one</div>
+        <div class="feature-desc">The merchant graph is global. Southern European issuers (SIBS, Bizum-linked banks, BancoBPM) can activate immediately — no regional merchant negotiation needed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVENUE MODEL -->
+<section class="section">
+  <div class="label reveal">Business model</div>
+  <h2 class="section-title reveal d1">Three ways <em>Knot earns</em></h2>
+  <p class="section-body reveal d2">MerchantMatch™ is additive to Knot's existing revenue — every recommendation that converts is a CardSwitcher™ event, which Knot already monetises. The model layers on top.</p>
+
+  <div class="rev-grid">
+    <div class="rev-card reveal d1">
+      <div class="rev-label">Model 01</div>
+      <div class="rev-name">Per-link fee</div>
+      <div class="rev-desc">Issuer pays per successful merchant link generated via a MerchantMatch™ recommendation. Aligned incentives — Knot earns when it delivers.</div>
+      <div class="rev-eg">$0.25–$0.75 / successful link<br>stacks on existing CardSwitcher™ fee</div>
+    </div>
+    <div class="rev-card reveal d2">
+      <div class="rev-label">Model 02</div>
+      <div class="rev-name">SaaS dashboard</div>
+      <div class="rev-desc">Monthly platform fee for access to the analytics dashboard, graph insights, and recommendation tuning. Sells to the CMO, not just the CTO.</div>
+      <div class="rev-eg">$2,000–$15,000 / month<br>based on cardholder volume</div>
+    </div>
+    <div class="rev-card reveal d3">
+      <div class="rev-label">Model 03</div>
+      <div class="rev-name">Merchant sponsorship</div>
+      <div class="rev-desc">Merchants pay to be recommended to high-fit cardholder segments. Clean, performance-based — only charged on confirmed links, not impressions.</div>
+      <div class="rev-eg">CPA model · $1–$4 / link<br>opt-in for Knot merchant network</div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section class="author-section" id="author">
+  <div>
+    <div class="author-eyebrow">Why I built this</div>
+    <h2 class="author-title reveal">
+      I want to help Knot<br>
+      <em>find the next product</em>
+    </h2>
+    <p class="author-body reveal d1">
+      MerchantMatch™ isn't a pitch for a side project. It's how I think about the Chief of Staff role — finding the gaps in an already strong product suite and making the case for what comes next. I'd want to do this every week alongside Rory and Kieran.
+    </p>
+  </div>
+  <div class="author-card reveal d1">
+    <div class="author-name">Rita</div>
+    <div class="author-role">Platform Operations · Capchase &nbsp;·&nbsp; Lisbon → New York</div>
+    <div class="author-bio">
+      3+ years in B2B fintech ops. Led Capchase's Canada expansion, built payment ops across Modern Treasury, GoCardless, Stripe, and JPMC. Co-founded granter.ai. Decoded the Easter egg on your careers page.
+    </div>
+    <div class="chips">
+      <span class="chip">Payment operations</span>
+      <span class="chip">Cross-border expansion</span>
+      <span class="chip">Product strategy</span>
+      <span class="chip">Modern Treasury</span>
+      <span class="chip">Financial modelling</span>
+      <span class="chip">C-suite comms</span>
+    </div>
+    <a href="mailto:ritafnevespereira@gmail.com?subject=MerchantMatch%E2%84%A2%20%E2%80%94%20Chief%20of%20Staff%20Application" class="btn-primary">Let's talk →</a>
+  </div>
+</section>
+
+
+<footer>
+  <div class="footer-mono">MERCHANTMATCH™ — A PRODUCT CONCEPT BY RITA · MARCH 2026</div>
+  <div class="footer-mono">Not affiliated with Knot API, Inc. · Built to demonstrate initiative.</div>
+</footer>
+
+<script>
+// Cursor
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function tick(){
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
+  curR.style.left=rx+'px';curR.style.top=ry+'px';
+  requestAnimationFrame(tick);
+})();
+
+// Scroll reveal
+const revEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.1});
+revEls.forEach(el=>obs.observe(el));
+
+</script>
+</body>
+</html>
