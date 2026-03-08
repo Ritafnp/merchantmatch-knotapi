@@ -39,4 +39,4 @@ I'm **Rita Neves Pereira**, a fintech ops professional based in Lisbon, relocati
 
 ---
 
-*Built with HTML, CSS, and too much enthusiasm for API design.*
+*Built with ❤️.*
